@@ -206,8 +206,8 @@ else:
         # session state.
         with st.chat_message("assistant"):
             #response = st.markdown(stream)
-            #st.markdown(stream)
-            st.chat_message("ai").write(response.content)
+            st.markdown(response.content)
+            #st.chat_message("ai").write(response.content)
         msgs.add_ai_message(response["result"])  
         st.session_state.messages.append({"role": "assistant", "content": response.content})
         # Draw the messages at the end, so newly generated ones show up immediately
