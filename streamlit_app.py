@@ -102,26 +102,18 @@ else:
 
     # Create a chat input field to allow the user to enter a message. This will display
     # automatically at the bottom of the page.
-    if prompt := st.chat_input("What is up?"):
+    if prompt := st.chat_input("¿Qué puede hacer acciona por los accionistas?"):
 
         # Store and display the current prompt.
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
-
-        # # Generate a response using the OpenAI API.
-        # stream = client.chat.completions.create(
-        #     model="gpt-3.5-turbo",
-        #     messages=[
-        #         {"role": m["role"], "content": m["content"]}
-        #         for m in st.session_state.messages
-        #     ],
-        #     stream=True,
-        # )
-        response = qa_chain(prompt)
-        stream = parse_response(response)
+            with st.spinner("Pensando..."):
+                response = qa_chain(prompt)
+                print(response)
+                stream = parse_response(response)
         # Stream the response to the chat using `st.write_stream`, then store it in 
         # session state.
         with st.chat_message("assistant"):
-            response = st.write(stream)
+            response = st.markdown(stream)
         st.session_state.messages.append({"role": "assistant", "content": response})
