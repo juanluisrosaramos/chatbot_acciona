@@ -19,7 +19,6 @@ os.environ["PINECONE_API_KEY"] = "pcsk_2fqiNg_Bk993SPWiRm9zedaJcD71eBfr43rsNzmtB
 PINECONE_API_KEY = os.environ['PINECONE_API_KEY']
 PINECONE_ENV = "us-west4-gcp-free"
 
-OPENAI_API_KEY = userdata.get('OPENAI_API_KEY')
 embed_model = "text-embedding-ada-002"
 
 PINECONE_ENV = "us-west4-gcp-free"
