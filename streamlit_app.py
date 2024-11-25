@@ -78,27 +78,29 @@ else:
         search_kwargs={"k": 5, "score_threshold": 0.7},
     )
     llm = OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY)
-    def parse_response(response):
-        print(response['result'])
-        print('\n\nSources:')
-        for source_name in response["source_documents"]:
-            print(source_name.metadata['source'], "page #:", source_name.metadata['page'])
-    def process_query(result):        
+    
+    def process_query(result):
+        
         answer = result["result"]
         sources = result["source_documents"]
 
-        # Clean and format sources
+        # Clean and format sources, removing the file path prefix
         source_strings = []
-        seen_sources = set() # Keep track of sources we've already added
+        seen_sources = set()
+        file_path_prefix = "/content/drive/MyDrive/acciona/"  # Prefix to remove
+
         for doc in sources:
             source_str = f"{doc.metadata['source']} page #: {doc.metadata['page']}"
-            if source_str not in seen_sources:  # Check for duplicates
-                source_strings.append(source_str)
-                seen_sources.add(source_str)
+            if source_str not in seen_sources:
+                # Remove the prefix if it exists
+                cleaned_source = source_str.replace(file_path_prefix, "")
+                source_strings.append(cleaned_source)
+                seen_sources.add(source_str) # Still use original for duplicate check
 
-        # Combine answer and sources (limit to 3 sources for brevity)
-        final_response = f"{answer}\n\nSources:\n{chr(10).join(source_strings[:3])}"  # Show up to 3 sources
+        final_response = f"{answer}\n\nSources:\n{chr(10).join(source_strings[:3])}"
         return final_response
+
+
     qa_chain = RetrievalQA.from_chain_type(llm=llm,
                                     chain_type="stuff",
                                     retriever=retriever,
