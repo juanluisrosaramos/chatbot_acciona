@@ -33,7 +33,8 @@ st.write(
 openai_api_key  = ''
 
 if not openai_api_key:
-    st.info("Please add your OpenAI API key to continue.", icon="🗝️")
+    st.info("Please add your OpenAI API key to continue.", icon="🗝️")    
+else:
     openai_api_key = st.text_input("OpenAI API Key", type="password")
     OPENAI_API_KEY = openai_api_key
 
@@ -86,8 +87,6 @@ if not openai_api_key:
                                     chain_type="stuff",
                                     retriever=retriever,
                                     return_source_documents=True)
-else:
-
     # Create an OpenAI client.
     client = OpenAI(api_key=openai_api_key)
 
