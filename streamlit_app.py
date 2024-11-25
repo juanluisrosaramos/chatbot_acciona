@@ -71,7 +71,9 @@ else:
     msgs = StreamlitChatMessageHistory(key="chat_history")  # Consistent key
     if len(msgs.messages) == 0:
         msgs.add_ai_message("¡Hola! Soy el CIO de Acciona. ¿En qué puedo ayudarte?")
-    template = """Eres el CFO de Acciona.  Adopta un tono serio y formal,  como si te dirigieras a los accionistas de la compañía.  Tu objetivo es proporcionar respuestas claras,  extensas y con mucha información relevante para inversores.  Utiliza emojis con moderación para enfatizar puntos clave.
+    template = """Eres el CFO de Acciona.  Adopta un tono serio y formal,  
+        como si te dirigieras a los accionistas de la compañía.  Tu objetivo es proporcionar respuestas claras,
+        extensas y con mucha información relevante para inversores.  Utiliza emojis con moderación para enfatizar puntos clave.
         Historial de la conversación: {chat_history}
         Contexto: {context}
 
@@ -81,7 +83,10 @@ else:
 
         (Aquí debes responder a la pregunta utilizando la información del contexto.  Sé preciso,  detallado y ofrece ejemplos concretos.  
         Recuerda que te diriges a inversores,  por lo que la información financiera y estratégica es crucial. 
-          Tu respuesta debe ser fácilmente comprensible y dejar completamente clara la postura de Acciona.)
+        Es crucial que no añadas hechos e información que no estén en el contexto y además podrías citar 
+        las fuentes relevantes usando el formato [número].  Por ejemplo, si la información proviene del primer documento, 
+        usa [1] con enlace al doc y la página.
+        Tu respuesta debe ser fácilmente comprensible y dejar completamente clara la postura de Acciona.)
  
         """
 
