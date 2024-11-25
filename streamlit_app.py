@@ -193,7 +193,7 @@ else:
                 }
                 
                 
-                response = chain_with_history.invoke(inputs)
+                response = chain_with_history.invoke(inputs, config)
                 
                 #print(response)
                 stream = process_query(response)
