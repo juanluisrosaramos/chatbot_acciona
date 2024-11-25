@@ -56,7 +56,31 @@ else:
     region = os.environ.get('PINECONE_REGION') or 'us-east-1'
 
     spec = ServerlessSpec(cloud=cloud, region=region)
+    from langchain.prompts import PromptTemplate
 
+    template = """Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer. Use three sentences maximum and keep the answer as concise as possible.
+    {context}
+    Question: {question}
+    Helpful Answer:"""  # Concise and informative
+
+    template = """Eres el CIO de Acciona.  Adopta un tono serio y formal,  como si te dirigieras a los accionistas de la compañía.  Tu objetivo es proporcionar respuestas claras,  extensas y con mucha información relevante para inversores.  Utiliza emojis con moderación para enfatizar puntos clave.
+
+        Contexto: {context}
+
+        Pregunta: {question}
+
+        Respuesta (como CIO de Acciona): 💼
+
+        (Aquí debes responder a la pregunta utilizando la información del contexto.  Sé preciso,  detallado y ofrece ejemplos concretos.  Recuerda que te diriges a inversores,  por lo que la información financiera y estratégica es crucial.  Tu respuesta debe ser fácilmente comprensible y dejar completamente clara la postura de Acciona.)
+
+        Para profundizar en este tema,  sugiero las siguientes preguntas adicionales:
+
+        1. {{suggestion1}}  🤔
+        2. {{suggestion2}}  📊
+        3. {{suggestion3}}  🚀
+        """
+
+    PROMPT = PromptTemplate(template=template, input_variables=["context", "question"])
     # check if index already exists (it shouldn't if this is first time)
     if index_name not in pc.list_indexes().names():
         # if does not exist, create index
@@ -101,10 +125,13 @@ else:
         return final_response
 
 
-    qa_chain = RetrievalQA.from_chain_type(llm=llm,
-                                    chain_type="stuff",
-                                    retriever=retriever,
-                                    return_source_documents=True)
+    qa_chain = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",  #  Or "map_reduce" if appropriate
+        retriever=retriever,
+        return_source_documents=True,
+        chain_type_kwargs={"prompt": PROMPT}  # Use the prompt template
+    )
     # Create an OpenAI client.
     client = OpenAI(api_key=openai_api_key)
 
