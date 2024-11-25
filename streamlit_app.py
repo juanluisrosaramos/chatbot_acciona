@@ -131,19 +131,31 @@ else:
 
         final_response = f"{answer}\n\nSources:\n{chr(10).join(source_strings[:3])}"
         return final_response
-
-    qa_chain = RunnableWithMessageHistory(
-        RetrievalQA.from_chain_type(
+    chain = PROMPT | RetrievalQA.from_chain_type(
             llm=llm,
             chain_type="stuff",
             retriever=retriever,
             return_source_documents=True,
             chain_type_kwargs={"prompt": PROMPT},
-        ),
-        lambda session_id: msgs,  # Pass the message history
+        )
+    # qa_chain = RunnableWithMessageHistory(
+    #     RetrievalQA.from_chain_type(
+    #         llm=llm,
+    #         chain_type="stuff",
+    #         retriever=retriever,
+    #         return_source_documents=True,
+    #         chain_type_kwargs={"prompt": PROMPT},
+    #     ),
+    #     lambda session_id: msgs,  # Pass the message history
+    #     input_messages_key="question",
+    #     history_messages_key="chat_history",  # Match the template variable
+    # )
+    chain_with_history = RunnableWithMessageHistory(
+        chain,
+        lambda session_id: msgs,
         input_messages_key="question",
-        history_messages_key="chat_history",  # Match the template variable
-    )
+        history_messages_key="chat_history",
+        )
     # Create an OpenAI client.
     client = OpenAI(api_key=openai_api_key)
 
@@ -171,7 +183,8 @@ else:
             with st.spinner("Pensando..."):
                 config = {"configurable": {"session_id": "any"}} # Necessary for history to work
                 inputs = {"query": prompt, "chat_history": msgs.messages}  # Corrected input
-                response = qa_chain.invoke(inputs, config=config)
+                response = chain_with_history.invoke({"question": prompt}, config)
+                
                 #print(response)
                 stream = process_query(response)
 
@@ -179,6 +192,7 @@ else:
         # session state.
         with st.chat_message("assistant"):
             #response = st.markdown(stream)
-            st.markdown(stream)
+            #st.markdown(stream)
+            st.chat_message("ai").write(stream)
         msgs.add_ai_message(response["result"])  
         st.session_state.messages.append({"role": "assistant", "content": response['result']})
