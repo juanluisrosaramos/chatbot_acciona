@@ -211,7 +211,7 @@ else:
         msgs.add_ai_message(response["result"])  
         st.session_state.messages.append({"role": "assistant", "content": response.content})
         # Draw the messages at the end, so newly generated ones show up immediately
-    with view_messages:
+        with view_messages:
         """
         Message History initialized with:
         ```python
@@ -220,4 +220,4 @@ else:
 
         Contents of `st.session_state.langchain_messages`:
         """
-        view_messages.json(st.session_state.langchain_messages)
+            view_messages.json(st.session_state.langchain_messages)
