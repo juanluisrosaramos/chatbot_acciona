@@ -83,6 +83,7 @@ else:
         print('\n\nSources:')
         for source_name in response["source_documents"]:
             print(source_name.metadata['source'], "page #:", source_name.metadata['page'])
+
     qa_chain = RetrievalQA.from_chain_type(llm=llm,
                                     chain_type="stuff",
                                     retriever=retriever,
@@ -112,8 +113,10 @@ else:
                 response = qa_chain(prompt)
                 print(response)
                 stream = parse_response(response)
+
         # Stream the response to the chat using `st.write_stream`, then store it in 
         # session state.
         with st.chat_message("assistant"):
-            response = st.markdown(stream)
-        st.session_state.messages.append({"role": "assistant", "content": response})
+            #response = st.markdown(stream)
+            st.markdown(response.content)
+        st.session_state.messages.append({"role": "assistant", "content": response.content})
