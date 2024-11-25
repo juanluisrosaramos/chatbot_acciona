@@ -132,7 +132,6 @@ else:
         final_response = f"{answer}\n\nSources:\n{chr(10).join(source_strings[:3])}"
         return final_response
 
-
     qa_chain = RunnableWithMessageHistory(
         RetrievalQA.from_chain_type(
             llm=llm,
@@ -171,7 +170,7 @@ else:
             st.markdown(prompt)
             with st.spinner("Pensando..."):
                 config = {"configurable": {"session_id": "any"}} # Necessary for history to work
-                response = qa_chain(prompt)
+                response = qa_chain.invoke({"question": prompt}, config=config)
                 #print(response)
                 stream = process_query(response)
 
