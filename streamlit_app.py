@@ -123,5 +123,5 @@ else:
         # Stream the response to the chat using `st.write_stream`, then store it in 
         # session state.
         with st.chat_message("assistant"):
-            response = st.write_stream(stream)
+            response = st.write(stream)
         st.session_state.messages.append({"role": "assistant", "content": response})
