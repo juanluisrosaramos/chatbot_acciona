@@ -132,12 +132,12 @@ else:
         final_response = f"{answer}\n\nSources:\n{chr(10).join(source_strings[:3])}"
         return final_response
     chain = PROMPT | RetrievalQA.from_chain_type(
-            llm=llm,
-            chain_type="stuff",
-            retriever=retriever,
-            return_source_documents=True,
-            chain_type_kwargs={"prompt": PROMPT},
-        )
+                llm=llm,
+                chain_type="stuff",
+                retriever=retriever,
+                return_source_documents=True,
+                chain_type_kwargs={"prompt": PROMPT},
+            )
     # qa_chain = RunnableWithMessageHistory(
     #     RetrievalQA.from_chain_type(
     #         llm=llm,
@@ -181,9 +181,19 @@ else:
         with st.chat_message("user"):
             st.markdown(prompt)
             with st.spinner("Pensando..."):
+
+                docs = retriever.get_relevant_documents(prompt)
+                # Construct the context string
+                context = "\n".join([doc.page_content for doc in docs])
                 config = {"configurable": {"session_id": "any"}} # Necessary for history to work
-                inputs = {"query": prompt, "chat_history": msgs.messages}  # Corrected input
-                response = chain_with_history.invoke({"question": prompt}, config)
+                inputs = {
+                    "question": prompt,
+                    "chat_history": msgs.messages,
+                    "context": context,  # Include the retrieved context
+                }
+                
+                
+                response = chain_with_history.invoke(inputs)
                 
                 #print(response)
                 stream = process_query(response)
