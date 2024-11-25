@@ -38,7 +38,7 @@ else:
     
     OPENAI_API_KEY = openai_api_key
 
-    os.environ["OPENAI_API_KEY"] = ""
+    os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
     OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
     embed_model = "text-embedding-ada-002"
     os.environ["PINECONE_API_KEY"] = "pcsk_2fqiNg_Bk993SPWiRm9zedaJcD71eBfr43rsNzmtBhaAS2RPyRJZ15m3CPRVSLNPQDvTig"
