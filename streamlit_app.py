@@ -25,7 +25,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 # Set up memory (same key as in the prompt template)
 msgs = StreamlitChatMessageHistory(key="chat_history")  # Consistent key
 if len(msgs.messages) == 0:
-    msgs.add_ai_message("¡Hola! Soy el CIO de Acciona. ¿En qué puedo ayudarte?")
+    msgs.add_ai_message("¡Hola! Soy el CFO de Acciona. ¿En qué puedo ayudarte?")
 # Show title and description.
 st.title("💬 Chatbot")
 st.write(
@@ -208,7 +208,7 @@ else:
             #response = st.markdown(stream)
             st.write(response.content)
             #st.chat_message("ai").write(response.content)
-        msgs.add_ai_message(response["result"])  
+        msgs.add_ai_message(response.content)  
         st.session_state.messages.append({"role": "assistant", "content": response.content})
         # Draw the messages at the end, so newly generated ones show up immediately
         # with view_messages:
