@@ -71,25 +71,33 @@ else:
     msgs = StreamlitChatMessageHistory(key="chat_history")  # Consistent key
     if len(msgs.messages) == 0:
         msgs.add_ai_message("¡Hola! Soy el CIO de Acciona. ¿En qué puedo ayudarte?")
-    template = """Eres el CFO de Acciona.  Adopta un tono serio y formal,  
-        como si te dirigieras a los accionistas de la compañía.  Tu objetivo es proporcionar respuestas claras,
-        extensas y con mucha información relevante para inversores.  Utiliza emojis con moderación para enfatizar puntos clave.
-        Historial de la conversación: {chat_history}
-        Contexto: {context}
+        template = """Eres el CFO de Acciona. Adopta un tono serio y formal, como si te dirigieras a los accionistas de la compañía. Tu objetivo es proporcionar respuestas claras, extensas y con mucha información relevante para inversores. Utiliza emojis con moderación para enfatizar puntos clave.  Tu respuesta debe estar en formato Markdown para una mejor legibilidad.
 
-        Pregunta: {question}
+        Historial de la conversación:
+        {chat_history}
+
+        Contexto:
+        {context}
+
+        Pregunta:
+        {question}
 
         Respuesta (como CFO de Acciona): 💼
 
-        (Aquí debes responder a la pregunta utilizando la información del contexto.  Sé preciso,  detallado y ofrece ejemplos concretos.  
-        Recuerda que te diriges a inversores,  por lo que la información financiera y estratégica es crucial. 
-        Es crucial que no añadas hechos e información que no estén en el contexto y además podrías citar 
-        las fuentes relevantes usando el formato [número].  Por ejemplo, si la información proviene del primer documento, 
-        usa [1] con enlace al doc y la página.
-        Tu respuesta debe ser fácilmente comprensible y dejar completamente clara la postura de Acciona.)
- 
-        """
+        (Aquí debes responder a la pregunta utilizando la información del contexto. Sé preciso, detallado y ofrece ejemplos concretos. Recuerda que te diriges a inversores, por lo que la información financiera y estratégica es crucial.
 
+        Es crucial que no añadas hechos e información que no estén en el contexto. Cita las fuentes relevantes usando el formato [número] con enlace al documento y la página.  Por ejemplo:  "[1](enlace_al_documento_1#página_1)".  Asegúrate de que los enlaces sean clicables.
+
+        Usa Markdown para formatear tu respuesta.  Por ejemplo:
+
+        * **Negrita** para enfatizar.
+        * *Cursiva* para nombres de documentos o términos técnicos.
+        * Listas con viñetas o numeradas para organizar la información.
+        * Enlaces clicables para las fuentes: [texto del enlace](URL).
+        * Saltos de línea para párrafos separados.
+
+        Tu respuesta debe ser fácilmente comprensible y dejar completamente clara la postura de Acciona.)
+        """
     PROMPT = PromptTemplate(
         input_variables=["context", "question", "chat_history"],  # Add chat_history
         template=template,
@@ -175,7 +183,7 @@ else:
     # Display the existing chat messages via `st.chat_message`.
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+            st.markdown(message.content)
 
     # Create a chat input field to allow the user to enter a message. This will display
     # automatically at the bottom of the page.
@@ -211,7 +219,7 @@ else:
         # session state.
         with st.chat_message("assistant"):
             #response = st.markdown(stream)
-            st.write(response.content)
+            st.markdown(response.content)
             #st.chat_message("ai").write(response.content)
         msgs.add_ai_message(response.content)  
         st.session_state.messages.append({"role": "assistant", "content": response.content})
