@@ -71,7 +71,7 @@ else:
     msgs = StreamlitChatMessageHistory(key="chat_history")  # Consistent key
     if len(msgs.messages) == 0:
         msgs.add_ai_message("¡Hola! Soy el CIO de Acciona. ¿En qué puedo ayudarte?")
-        template = """Eres el CFO de Acciona. Adopta un tono serio y formal, como si te dirigieras a los accionistas de la compañía. Tu objetivo es proporcionar respuestas claras, extensas y con mucha información relevante para inversores. Utiliza emojis con moderación para enfatizar puntos clave.  Tu respuesta debe estar en formato Markdown para una mejor legibilidad.
+    template = """Eres el CFO de Acciona. Adopta un tono serio y formal, como si te dirigieras a los accionistas de la compañía. Tu objetivo es proporcionar respuestas claras, extensas y con mucha información relevante para inversores. Utiliza emojis con moderación para enfatizar puntos clave.  Tu respuesta debe estar en formato Markdown para una mejor legibilidad.
 
         Historial de la conversación:
         {chat_history}
@@ -100,8 +100,7 @@ else:
         """
     PROMPT = PromptTemplate(
         input_variables=["context", "question", "chat_history"],  # Add chat_history
-        template=template,
-        )       
+        template=template,)       
     # check if index already exists (it shouldn't if this is first time)
     if index_name not in pc.list_indexes().names():
         # if does not exist, create index
