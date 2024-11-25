@@ -30,61 +30,62 @@ st.write(
 # Ask user for their OpenAI API key via `st.text_input`.
 # Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
 # via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
-openai_api_key = st.text_input("OpenAI API Key", type="password")
-OPENAI_API_KEY = openai_api_key
 
-os.environ["OPENAI_API_KEY"] = ""
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-embed_model = "text-embedding-ada-002"
-os.environ["PINECONE_API_KEY"] = "pcsk_2fqiNg_Bk993SPWiRm9zedaJcD71eBfr43rsNzmtBhaAS2RPyRJZ15m3CPRVSLNPQDvTig"
-PINECONE_API_KEY = os.environ['PINECONE_API_KEY']
-PINECONE_ENV = "us-west4-gcp-free"
-PINECONE_ENV = "us-west4-gcp-free"
-index_name = 'accionapdfs'
-api_key = PINECONE_API_KEY
-
-# configure client
-pc = Pinecone(api_key=api_key)
-
-
-cloud = os.environ.get('PINECONE_CLOUD') or 'aws'
-region = os.environ.get('PINECONE_REGION') or 'us-east-1'
-
-spec = ServerlessSpec(cloud=cloud, region=region)
-
-# check if index already exists (it shouldn't if this is first time)
-if index_name not in pc.list_indexes().names():
-    # if does not exist, create index
-    pc.create_index(
-        index_name,
-        dimension=1536,  # dimensionality of text-embedding-ada-002
-        metric='cosine',
-        spec=spec
-    )
-# connect to index
-index = pc.Index(index_name)
-# view index stats
-index.describe_index_stats()
-embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-
-vector_store = PineconeVectorStore(index=index, embedding=embeddings)
-retriever = vector_store.as_retriever(
-    search_type="similarity_score_threshold",
-    search_kwargs={"k": 5, "score_threshold": 0.7},
-)
-llm = OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY)
-def parse_response(response):
-    print(response['result'])
-    print('\n\nSources:')
-    for source_name in response["source_documents"]:
-        print(source_name.metadata['source'], "page #:", source_name.metadata['page'])
-qa_chain = RetrievalQA.from_chain_type(llm=llm,
-                                  chain_type="stuff",
-                                  retriever=retriever,
-                                  return_source_documents=True)
 
 if not openai_api_key:
     st.info("Please add your OpenAI API key to continue.", icon="🗝️")
+    openai_api_key = st.text_input("OpenAI API Key", type="password")
+    OPENAI_API_KEY = openai_api_key
+
+    os.environ["OPENAI_API_KEY"] = ""
+    OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+    embed_model = "text-embedding-ada-002"
+    os.environ["PINECONE_API_KEY"] = "pcsk_2fqiNg_Bk993SPWiRm9zedaJcD71eBfr43rsNzmtBhaAS2RPyRJZ15m3CPRVSLNPQDvTig"
+    PINECONE_API_KEY = os.environ['PINECONE_API_KEY']
+    PINECONE_ENV = "us-west4-gcp-free"
+    PINECONE_ENV = "us-west4-gcp-free"
+    index_name = 'accionapdfs'
+    api_key = PINECONE_API_KEY
+
+    # configure client
+    pc = Pinecone(api_key=api_key)
+
+
+    cloud = os.environ.get('PINECONE_CLOUD') or 'aws'
+    region = os.environ.get('PINECONE_REGION') or 'us-east-1'
+
+    spec = ServerlessSpec(cloud=cloud, region=region)
+
+    # check if index already exists (it shouldn't if this is first time)
+    if index_name not in pc.list_indexes().names():
+        # if does not exist, create index
+        pc.create_index(
+            index_name,
+            dimension=1536,  # dimensionality of text-embedding-ada-002
+            metric='cosine',
+            spec=spec
+        )
+    # connect to index
+    index = pc.Index(index_name)
+    # view index stats
+    index.describe_index_stats()
+    embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+
+    vector_store = PineconeVectorStore(index=index, embedding=embeddings)
+    retriever = vector_store.as_retriever(
+        search_type="similarity_score_threshold",
+        search_kwargs={"k": 5, "score_threshold": 0.7},
+    )
+    llm = OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY)
+    def parse_response(response):
+        print(response['result'])
+        print('\n\nSources:')
+        for source_name in response["source_documents"]:
+            print(source_name.metadata['source'], "page #:", source_name.metadata['page'])
+    qa_chain = RetrievalQA.from_chain_type(llm=llm,
+                                    chain_type="stuff",
+                                    retriever=retriever,
+                                    return_source_documents=True)
 else:
 
     # Create an OpenAI client.
