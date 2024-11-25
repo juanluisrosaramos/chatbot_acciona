@@ -10,18 +10,6 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.chains import RetrievalQA
 
 from pinecone import Pinecone
-os.environ["OPENAI_API_KEY"] = ""
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-
-embed_model = "text-embedding-ada-002"
-
-os.environ["PINECONE_API_KEY"] = "pcsk_2fqiNg_Bk993SPWiRm9zedaJcD71eBfr43rsNzmtBhaAS2RPyRJZ15m3CPRVSLNPQDvTig"
-PINECONE_API_KEY = os.environ['PINECONE_API_KEY']
-PINECONE_ENV = "us-west4-gcp-free"
-
-embed_model = "text-embedding-ada-002"
-
-PINECONE_ENV = "us-west4-gcp-free"
 # Show title and description.
 st.title("💬 Chatbot")
 st.write(
@@ -29,8 +17,26 @@ st.write(
     "To use this app, you need to provide an OpenAI API key, which you can get [here](https://platform.openai.com/account/api-keys). "    
 )
 
-index_name = 'accionapdfs'
 
+
+
+# Ask user for their OpenAI API key via `st.text_input`.
+# Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
+# via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
+openai_api_key = st.text_input("OpenAI API Key", type="password")
+OPENAI_API_KEY = openai_api_key
+retriever = vector_store.as_retriever(
+    search_type="similarity_score_threshold",
+    search_kwargs={"k": 5, "score_threshold": 0.7},
+)
+os.environ["OPENAI_API_KEY"] = ""
+OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+embed_model = "text-embedding-ada-002"
+os.environ["PINECONE_API_KEY"] = "pcsk_2fqiNg_Bk993SPWiRm9zedaJcD71eBfr43rsNzmtBhaAS2RPyRJZ15m3CPRVSLNPQDvTig"
+PINECONE_API_KEY = os.environ['PINECONE_API_KEY']
+PINECONE_ENV = "us-west4-gcp-free"
+PINECONE_ENV = "us-west4-gcp-free"
+index_name = 'accionapdfs'
 api_key = PINECONE_API_KEY
 
 # configure client
@@ -61,16 +67,6 @@ embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 from langchain_pinecone import PineconeVectorStore
 
 vector_store = PineconeVectorStore(index=index, embedding=embeddings)
-
-
-# Ask user for their OpenAI API key via `st.text_input`.
-# Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
-# via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
-openai_api_key = st.text_input("OpenAI API Key", type="password")
-retriever = vector_store.as_retriever(
-    search_type="similarity_score_threshold",
-    search_kwargs={"k": 5, "score_threshold": 0.7},
-)
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chains import RetrievalQA
 llm = OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY)
