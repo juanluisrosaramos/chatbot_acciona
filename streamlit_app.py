@@ -118,5 +118,5 @@ else:
         # session state.
         with st.chat_message("assistant"):
             #response = st.markdown(stream)
-            st.markdown(response.content)
+            st.markdown(response['result'])
         st.session_state.messages.append({"role": "assistant", "content": response.content})
