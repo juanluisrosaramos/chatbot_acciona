@@ -71,7 +71,7 @@ else:
     msgs = StreamlitChatMessageHistory(key="chat_history")  # Consistent key
     if len(msgs.messages) == 0:
         msgs.add_ai_message("¡Hola! Soy el CIO de Acciona. ¿En qué puedo ayudarte?")
-    template = """Eres el CIO de Acciona.  Adopta un tono serio y formal,  como si te dirigieras a los accionistas de la compañía.  Tu objetivo es proporcionar respuestas claras,  extensas y con mucha información relevante para inversores.  Utiliza emojis con moderación para enfatizar puntos clave.
+    template = """Eres el CFO de Acciona.  Adopta un tono serio y formal,  como si te dirigieras a los accionistas de la compañía.  Tu objetivo es proporcionar respuestas claras,  extensas y con mucha información relevante para inversores.  Utiliza emojis con moderación para enfatizar puntos clave.
         Historial de la conversación: {chat_history}
         Contexto: {context}
 
@@ -170,7 +170,8 @@ else:
             st.markdown(prompt)
             with st.spinner("Pensando..."):
                 config = {"configurable": {"session_id": "any"}} # Necessary for history to work
-                response = qa_chain.invoke({"query": prompt}, config=config)
+                inputs = {"query": prompt, "chat_history": []}  # Corrected input
+                response = qa_chain.invoke(inputs, config=config)
                 #print(response)
                 stream = process_query(response)
 
