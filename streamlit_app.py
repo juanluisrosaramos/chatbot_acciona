@@ -131,13 +131,16 @@ else:
 
         final_response = f"{answer}\n\nSources:\n{chr(10).join(source_strings[:3])}"
         return final_response
-    chain = PROMPT | RetrievalQA.from_chain_type(
-                llm=llm,
-                chain_type="stuff",
-                retriever=retriever,
-                return_source_documents=True,
-                chain_type_kwargs={"prompt": PROMPT},
-            )
+    # chain = PROMPT | RetrievalQA.from_chain_type(
+    #             llm=llm,
+    #             chain_type="stuff",
+    #             retriever=retriever,
+    #             return_source_documents=True,
+    #             chain_type_kwargs={"prompt": PROMPT},
+    #         )
+    from langchain_openai import ChatOpenAI
+
+    chain = PROMPT | ChatOpenAI(api_key=openai_api_key)
     # qa_chain = RunnableWithMessageHistory(
     #     RetrievalQA.from_chain_type(
     #         llm=llm,
