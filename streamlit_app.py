@@ -10,6 +10,13 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.chains import RetrievalQA
 
 from pinecone import Pinecone
+import os
+from pinecone import Pinecone # import the Pinecone class
+from langchain_pinecone import PineconeVectorStore
+from langchain.chains.question_answering import load_qa_chain
+from langchain.chains import RetrievalQA
+from pinecone import ServerlessSpec
+
 # Show title and description.
 st.title("💬 Chatbot")
 st.write(
@@ -25,10 +32,7 @@ st.write(
 # via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
 openai_api_key = st.text_input("OpenAI API Key", type="password")
 OPENAI_API_KEY = openai_api_key
-retriever = vector_store.as_retriever(
-    search_type="similarity_score_threshold",
-    search_kwargs={"k": 5, "score_threshold": 0.7},
-)
+
 os.environ["OPENAI_API_KEY"] = ""
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 embed_model = "text-embedding-ada-002"
@@ -41,14 +45,12 @@ api_key = PINECONE_API_KEY
 
 # configure client
 pc = Pinecone(api_key=api_key)
-from pinecone import ServerlessSpec
+
 
 cloud = os.environ.get('PINECONE_CLOUD') or 'aws'
 region = os.environ.get('PINECONE_REGION') or 'us-east-1'
 
 spec = ServerlessSpec(cloud=cloud, region=region)
-import os
-from pinecone import Pinecone # import the Pinecone class
 
 # check if index already exists (it shouldn't if this is first time)
 if index_name not in pc.list_indexes().names():
@@ -64,11 +66,12 @@ index = pc.Index(index_name)
 # view index stats
 index.describe_index_stats()
 embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-from langchain_pinecone import PineconeVectorStore
 
 vector_store = PineconeVectorStore(index=index, embedding=embeddings)
-from langchain.chains.question_answering import load_qa_chain
-from langchain.chains import RetrievalQA
+retriever = vector_store.as_retriever(
+    search_type="similarity_score_threshold",
+    search_kwargs={"k": 5, "score_threshold": 0.7},
+)
 llm = OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY)
 def parse_response(response):
     print(response['result'])
