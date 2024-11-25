@@ -170,7 +170,7 @@ else:
             st.markdown(prompt)
             with st.spinner("Pensando..."):
                 config = {"configurable": {"session_id": "any"}} # Necessary for history to work
-                inputs = {"query": prompt, "chat_history": []}  # Corrected input
+                inputs = {"query": prompt, "chat_history": msgs.messages}  # Corrected input
                 response = qa_chain.invoke(inputs, config=config)
                 #print(response)
                 stream = process_query(response)
