@@ -75,9 +75,9 @@ else:
 
         Para profundizar en este tema,  sugiero las siguientes preguntas adicionales:
 
-        1. {{suggestion1}}  🤔
-        2. {{suggestion2}}  📊
-        3. {{suggestion3}}  🚀
+        1. suggestion1  🤔
+        2. suggestion2  📊
+        3. suggestion3  🚀
         """
 
     PROMPT = PromptTemplate(template=template, input_variables=["context", "question"])
