@@ -86,9 +86,18 @@ else:
     def process_query(result):        
         answer = result["result"]
         sources = result["source_documents"]
-        source_strings = [f"{doc.metadata['source']} page #: {doc.metadata['page']}" for doc in sources]        
-        # Combine answer and sources
-        final_response = f"{answer}\n\nSources:\n{chr(10).join(source_strings)}"
+
+        # Clean and format sources
+        source_strings = []
+        seen_sources = set() # Keep track of sources we've already added
+        for doc in sources:
+            source_str = f"{doc.metadata['source']} page #: {doc.metadata['page']}"
+            if source_str not in seen_sources:  # Check for duplicates
+                source_strings.append(source_str)
+                seen_sources.add(source_str)
+
+        # Combine answer and sources (limit to 3 sources for brevity)
+        final_response = f"{answer}\n\nSources:\n{chr(10).join(source_strings[:3])}"  # Show up to 3 sources
         return final_response
     qa_chain = RetrievalQA.from_chain_type(llm=llm,
                                     chain_type="stuff",
