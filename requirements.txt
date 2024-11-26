@@ -4,6 +4,6 @@ langChain
 tiktoken
 OpenAI
 pinecone-client
-langchain-community
 langchain_pinecone
 langchain-openai
+langchain-community
