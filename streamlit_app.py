@@ -179,7 +179,7 @@ else:
     for msg in msgs.messages:
         with st.chat_message(msg.type):
             st.markdown(msg.content)
-    view_messages = st.expander("View the message contents in session state")
+    
     if prompt := st.chat_input("Pregunta al financiero de Acciona Energía:"):
 
         # Store and display the current prompt.
@@ -208,19 +208,5 @@ else:
         # Stream the response to the chat using `st.write_stream`, then store it in 
         # session state.
         with st.chat_message("assistant"):
-            #response = st.markdown(stream)
             st.markdown(response.content)
-            #st.chat_message("ai").write(response.content)
-        msgs.add_ai_message(response.content)  
-        st.session_state.messages.append({"role": "assistant", "content": response.content})
-        # Draw the messages at the end, so newly generated ones show up immediately
-        # with view_messages:
-        # """
-        # Message History initialized with:
-        # ```python
-        # msgs = StreamlitChatMessageHistory(key="langchain_messages")
-        # ```
 
-        # Contents of `st.session_state.langchain_messages`:
-        # """
-        #     view_messages.json(st.session_state.langchain_messages)
