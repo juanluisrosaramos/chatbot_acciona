@@ -71,7 +71,10 @@ else:
     msgs = StreamlitChatMessageHistory(key="chat_history")  # Consistent key
     if len(msgs.messages) == 0:
         msgs.add_ai_message("¡Hola! Soy el CIO de Acciona. ¿En qué puedo ayudarte?")
-    template = """Eres el CFO de Acciona. Adopta un tono serio y formal, como si te dirigieras a los accionistas de la compañía. Tu objetivo es proporcionar respuestas claras, extensas y con mucha información relevante para inversores. Utiliza emojis con moderación para enfatizar puntos clave.  Tu respuesta debe estar en formato Markdown para una mejor legibilidad.
+    template = """Eres el CFO de Acciona. Adopta un tono serio y formal, 
+        como si te dirigieras a los accionistas de la compañía. Tu objetivo es proporcionar respuestas claras, extensas y con mucha información relevante para inversores. 
+        Utiliza emojis con moderación para enfatizar puntos clave.  
+        Tu respuesta debe estar en formato Markdown para una mejor legibilidad.
 
         Historial de la conversación:
         {chat_history}
@@ -86,8 +89,12 @@ else:
 
         (Aquí debes responder a la pregunta utilizando la información del contexto. Sé preciso, detallado y ofrece ejemplos concretos. Recuerda que te diriges a inversores, por lo que la información financiera y estratégica es crucial.
 
-        Es crucial que no añadas hechos e información que no estén en el contexto. Cita las fuentes relevantes usando el formato [número] con enlace al documento y la página.  Por ejemplo:  "[1](enlace_al_documento_1#página_1)".  Asegúrate de que los enlaces sean clicables.
-
+        Es crucial que no añadas hechos e información que no estén en el contexto. 
+        Cita las fuentes relevantes usando el formato [número] con enlace al documento 
+        y la página.  
+        
+        Por ejemplo:  "[1](enlace_al_documento_1#página_1)". 
+        
         Usa Markdown para formatear tu respuesta.  Por ejemplo:
 
         * **Negrita** para enfatizar.
@@ -96,7 +103,8 @@ else:
         * Enlaces clicables para las fuentes: [texto del enlace](URL).
         * Saltos de línea para párrafos separados.
 
-        Tu respuesta debe ser fácilmente comprensible y dejar completamente clara la postura de Acciona.)
+        Tu respuesta debe ser fácilmente comprensible y dejar completamente clara 
+        la postura de Acciona.
         """
     PROMPT = PromptTemplate(
         input_variables=["context", "question", "chat_history"],  # Add chat_history
@@ -153,25 +161,13 @@ else:
     from langchain_openai import ChatOpenAI
 
     chain = PROMPT | ChatOpenAI(api_key=openai_api_key, model='gpt-4o')
-    # qa_chain = RunnableWithMessageHistory(
-    #     RetrievalQA.from_chain_type(
-    #         llm=llm,
-    #         chain_type="stuff",
-    #         retriever=retriever,
-    #         return_source_documents=True,
-    #         chain_type_kwargs={"prompt": PROMPT},
-    #     ),
-    #     lambda session_id: msgs,  # Pass the message history
-    #     input_messages_key="question",
-    #     history_messages_key="chat_history",  # Match the template variable
-    # )
     chain_with_history = RunnableWithMessageHistory(
         chain,
         lambda session_id: msgs,
         input_messages_key="question",
         history_messages_key="chat_history",
         )
-    # Create an OpenAI client.
+  
     client = OpenAI(api_key=openai_api_key)
 
     # Create a session state variable to store the chat messages. This ensures that the
@@ -182,7 +178,7 @@ else:
     # Display the existing chat messages via `st.chat_message`.
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
-            st.markdown(message)
+            st.markdown(message.content)
 
     # Create a chat input field to allow the user to enter a message. This will display
     # automatically at the bottom of the page.
@@ -207,7 +203,7 @@ else:
                     "chat_history": msgs.messages,
                     "context": context,  # Include the retrieved context
                 }
-                
+                print(context)
                 
                 response = chain_with_history.invoke(inputs, config)
                 
