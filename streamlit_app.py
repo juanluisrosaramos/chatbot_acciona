@@ -127,7 +127,7 @@ else:
     vector_store = PineconeVectorStore(index=index, embedding=embeddings)
     retriever = vector_store.as_retriever(
         search_type="similarity_score_threshold",
-        search_kwargs={"k": 5, "score_threshold": 0.7},
+        search_kwargs={"k": 8, "score_threshold": 0.7},
     )
     llm = OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY)
     
