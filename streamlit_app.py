@@ -154,7 +154,7 @@ else:
     
     from langchain_openai import ChatOpenAI
 
-    chain = PROMPT | ChatOpenAI(api_key=openai_api_key, model='gpt-4o')
+    chain = PROMPT | ChatOpenAI(api_key=openai_api_key, model='gpt-4o', temperature=0)
     chain_with_history = RunnableWithMessageHistory(
         chain,
         lambda session_id: msgs,
